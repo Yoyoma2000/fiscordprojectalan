@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import {GGSans} from "@/public/fonts/fonts";
+import SideBar from "@/app/components/SideBar";
+import {SidebarContextProvider} from "@/app/lib/contexts";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +18,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  );
+      <html lang="en">
+
+      <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com"/>
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
+          <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+                rel="stylesheet"/>
+          <link rel="icon" href="favicon.ico"/>
+      <title>DiscordLite</title>
+      </head>
+
+    <body className={`${GGSans.className} bg-primary text-primary-text w-screem h-[calc(100svh)]`}>
+    <SidebarContextProvider>
+        {children}
+    </SidebarContextProvider>
+    </body>
+</html>
+)
+    ;
 }

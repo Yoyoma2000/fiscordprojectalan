@@ -26,7 +26,7 @@ export default function RootLayout({
           <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
                 rel="stylesheet"/>
           <link rel="icon" href="favicon.ico"/>
-      <title>DiscordLite</title>
+      <title>FiscordProject</title>
       </head>
 
     <body className={`${GGSans.className} bg-primary text-primary-text w-screem h-[calc(100svh)]`}>

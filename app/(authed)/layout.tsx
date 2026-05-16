@@ -19,15 +19,15 @@ export default function AuthLayout({children,}: Readonly<{ children: React.React
     }, [loading, user])
 
     useEffect(() => {
-        function useMediaQuery() {
-            setIsWeb(window.matchMedia("(min-width:640px)").matches)
-        }
-        window.addEventListener("resize", useMediaQuery);
-        return () => window.removeEventListener("resize", useMediaQuery);
-    })
+        const mq = window.matchMedia("(min-width:640px)");
+        setIsWeb(mq.matches);
+        const handler = () => setIsWeb(mq.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
 
     return (!loading && user) && <main className={"flex h-full relative"}>
-        <Transition show={isOpen || !isWeb} className={"z-10 w-full h-full sm:w-3/12 sm:min-w-60 sm:max-w-80 fixed sm:static transition duration-150 ease-in-out data-[closed]:-translate-x-full"} as="div">
+        <Transition show={isWeb ? true : isOpen} className={"z-10 w-full h-full sm:w-3/12 sm:min-w-60 sm:max-w-80 fixed sm:static transition duration-150 ease-in-out data-[closed]:-translate-x-full"} as="div">
             <SideBar/>
         </Transition>
 

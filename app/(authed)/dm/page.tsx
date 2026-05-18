@@ -14,7 +14,10 @@ import {
     Timestamp,
     doc,
     updateDoc,
-    DocumentData, deleteDoc
+    DocumentData, 
+    deleteDoc,
+    setDoc,
+    deleteField
 } from "@firebase/firestore";
 import {useCollection, useCollectionData, useDocumentData} from "react-firebase-hooks/firestore";
 import {FileInterface, MessageInterface} from "@/app/lib/interfaces";
@@ -58,6 +61,8 @@ export default function DM() {
     const [messageLimit, setMessageLimit] = useState(MESSAGE_LOAD_AMT);
     const [savedMessages, setSavedMessages] = useState(messages);
 
+    const [typingData] = useDocumentData(doc(firestore, "typing", dmId));
+
 
     useEffect( () => {
         function handleKeyDown(ev: KeyboardEvent) {
@@ -80,6 +85,30 @@ export default function DM() {
             setSavedMessages(messages)
         }
     }, [messages]);
+
+    useEffect(() => {
+        if (!user?.uid || !dmId) return;
+
+        if (text.length > 0) {
+            setDoc(doc(firestore, "typing", dmId), { 
+                [user.uid]: true 
+            }, { merge: true });
+        } else {
+            setDoc(doc(firestore, "typing", dmId), { 
+                [user.uid]: deleteField() 
+            }, { merge: true });
+        }
+    }, [text, dmId, user?.uid]);
+
+    useEffect(() => {
+        return () => {
+            if (!user?.uid || !dmId) return;
+            setDoc(doc(firestore, "typing", dmId), { 
+                [user.uid]: deleteField() 
+            }, { merge: true });
+        };
+    }, [dmId, user?.uid]); 
+
 
     const sendMessage = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -136,6 +165,8 @@ export default function DM() {
         }
     }
 
+
+
     return (
         <div className={"w-full flex flex-grow flex-col h-full"}>
             <header className={"border-tertiary border-b h-10 min-h-10 flex items-center justify-between px-5"}>
@@ -150,6 +181,7 @@ export default function DM() {
 
 
             <ol className={"bg-main-text-box m-2.5 outline outline-offset-2 outline-line rounded overflow-y-auto flex flex-col flex-col-reverse flex-grow"}  onScroll={loadMoreMessage}>
+                {typingData?.[friendData?.uid] && <p className="text-tertiary-text text-sm px-4">{friendData?.displayName} is typing...</p>}
                 {savedMessages?.docs.map((doc, i) => {
                     const messageData = doc.data({serverTimestamps: "estimate"}) as MessageInterface;
                     const id = doc.id;
@@ -169,8 +201,10 @@ export default function DM() {
                         />
                     )
                 })}
+                
             </ol>
 
+            
             <form onSubmit={sendMessage} className={"m-2.5 flex outline outline-offset-2 outline-line rounded"}>
                 {file && <FileBox file={file}/>}
                 <div className={"flex w-1/12 group justify-center items-center"}>

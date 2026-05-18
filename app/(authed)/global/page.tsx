@@ -29,7 +29,7 @@ export default function Home() {
         await addDoc(collection(firestore, "messages"), doc)
     }
 
-  return (
+    return (
         <div className={"w-10/12 flex flex-col justify-end p-5"}>
             <div className={"bg-main-text-box m-2.5 outline outline-offset-2 outline-line rounded"}>
 
@@ -60,5 +60,5 @@ export default function Home() {
                        onChange={(e) => setText(e.target.value)}></input>
             </form>
         </div>
-  );
+    );
 }

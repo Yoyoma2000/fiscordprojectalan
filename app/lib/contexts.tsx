@@ -1,3 +1,8 @@
+/*
+ * FEATURES:
+ * - SidebarContext: global state for mobile sidebar open/close
+ * - Wraps the whole app so any component can toggle the sidebar without prop drilling
+ */
 'use client'
 
 import {createContext, useState} from 'react'

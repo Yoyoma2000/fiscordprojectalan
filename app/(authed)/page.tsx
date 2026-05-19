@@ -1,3 +1,11 @@
+/*
+ * FEATURES:
+ * - Send friend request by email: queries Firestore for user, writes to requests collection
+ * - Incoming requests: real-time list with accept and reject buttons
+ * - Outgoing requests: real-time list with cancel button
+ * - Accept: deletes request doc, adds each user to the other's friends array via arrayUnion
+ */
+
 'use client'
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, firestore} from "@/app/firebase/config";

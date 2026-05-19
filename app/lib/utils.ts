@@ -1,3 +1,10 @@
+/*
+ * FEATURES:
+ * - prettyByteSize: converts raw bytes to human readable KB/MB/GB string
+ * - getImageDimension: loads an image and scales dimensions to fit within a max size
+ * - fetchBlurImage: uses pica to resize image to 32x32 and encode as base64 for blur placeholder
+ */
+
 import {Dimension} from "@/app/lib/interfaces";
 import pica from "pica";
 

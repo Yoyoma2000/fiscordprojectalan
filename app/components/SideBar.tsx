@@ -1,3 +1,11 @@
+/*
+ * FEATURES:
+ * - Lists all friends from current user's Firestore friends array in real time
+ * - Each friend card shows profile picture and display name, links to their DM
+ * - Responsive: sidebar is a drawer on mobile, toggled via SidebarContext
+ * - Sign out button clears Firebase Auth session and redirects to login
+ */
+
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, firestore} from "@/app/firebase/config";
 import {useDocumentData} from "react-firebase-hooks/firestore";

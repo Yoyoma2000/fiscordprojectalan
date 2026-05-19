@@ -1,3 +1,16 @@
+/*
+ * FEATURES:
+ * - Real-time 1-1 DM messaging via Firestore useCollection listener
+ * - Message edit: hover message, click edit, submit to update Firestore doc
+ * - Message delete: hover message, click delete, removes Firestore doc
+ * - Image upload: uploads to Firebase Storage, stores URL + dimensions + blur placeholder in Firestore
+ * - File upload: uploads to Firebase Storage, stores URL + name + size in Firestore
+ * - Image zoom modal: click any image to open fullscreen with "Open in Browser" link
+ * - Infinite scroll: loads messages in batches of 20, resets on DM switch
+ * - Keyboard shortcut: Escape key exits edit mode, auto-focuses text box
+ * - DM ID is two UIDs sorted and joined, ensuring same doc regardless of who opens first
+ */
+
 'use client'
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, firestore, storage} from "@/app/firebase/config";
@@ -14,7 +27,9 @@ import {
     Timestamp,
     doc,
     updateDoc,
-    DocumentData, deleteDoc
+    DocumentData, 
+    deleteDoc,
+    limit
 } from "@firebase/firestore";
 import {useCollection, useCollectionData, useDocumentData} from "react-firebase-hooks/firestore";
 import {FileInterface, MessageInterface} from "@/app/lib/interfaces";
@@ -36,7 +51,7 @@ export default function DM() {
     const [userData] = useDocumentData(doc(firestore, "users", user?.uid!));
     const [friendData] = useDocumentData(doc(firestore, "users", searchParams.get("id")!));
     const dmId = [searchParams.get("id"), user?.uid].toSorted().join("-");
-    const [messages] = useCollection(query(collection(firestore, "dm", dmId, "messages"), orderBy("createdAt", "desc")));
+
     // useCollectionData(query(collection(firestore,"messages"), orderBy("createdAt", "asc")), {snapshotOptions: {serverTimestamps: "estimate"}});
 
     const [editMessage, setEditMessage] = useState("");
@@ -56,9 +71,9 @@ export default function DM() {
     const SCROLL_LOAD_BUFFER = 200;
     const MESSAGE_LOAD_AMT = 20;
     const [messageLimit, setMessageLimit] = useState(MESSAGE_LOAD_AMT);
+    const [messages] = useCollection(query(collection(firestore, "dm", dmId, "messages"), orderBy("createdAt", "desc"), limit(messageLimit)));
     const [savedMessages, setSavedMessages] = useState(messages);
-
-
+   
     useEffect( () => {
         function handleKeyDown(ev: KeyboardEvent) {
             editMessageId == "" ? textBox.current?.focus() : editBoxes.current.get
@@ -73,6 +88,7 @@ export default function DM() {
 
     useEffect(() => {
         setText("");
+        setMessageLimit(MESSAGE_LOAD_AMT);
     }, [dmId]);
 
     useEffect(() => {
@@ -134,6 +150,7 @@ export default function DM() {
         {
             setMessageLimit(messageLimit + MESSAGE_LOAD_AMT);
         }
+        console.log(scrollTop, scrollHeight, clientHeight)
     }
 
     return (

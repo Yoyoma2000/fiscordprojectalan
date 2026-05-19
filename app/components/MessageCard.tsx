@@ -1,3 +1,13 @@
+/*
+ * FEATURES:
+ * - Renders a single message with profile picture, display name, timestamp (via moment.js)
+ * - Inline edit mode: replaces message text with an input box, submit saves to Firestore
+ * - Edit/delete buttons: visible on hover, only shown to message owner (hasOwnership)
+ * - Image rendering: uses Next.js Image with blur placeholder and click-to-zoom
+ * - File rendering: shows clickable file name link and pretty-printed file size
+ * - "edited" tag appears on messages that have been modified
+ */
+
 import {MessageInterface} from "@/app/lib/interfaces";
 import moment from "moment";
 import Link from "next/link";
@@ -69,7 +79,7 @@ export default function MessageCard({
                     <div>
                         <Link
                             className={"text-blurple hover:text-blurple-hover hover:underline active:text-burple-active"}
-                            href={file?.url!}>file?.name</Link>
+                            href={file?.url!}>{file?.name}</Link>
                         <p className={"text-sm"}>{prettyByteSize(file?.size ?? 0)}</p>
                     </div>)}
             </div>
